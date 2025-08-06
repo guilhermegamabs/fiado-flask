@@ -15,9 +15,9 @@
     <section>
         <h2>Clientes Cadastrados</h2>
         {% if clientes %}
-            <ul>
+            <ul style="list-style: none; padding: 0;">
             {% for id, nome in clientes %}
-                <li>
+                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                     <a href="{{ url_for('listar_fiados', nome_cliente=nome) }}">{{ nome }}</a>
                 </li>
             {% endfor %}

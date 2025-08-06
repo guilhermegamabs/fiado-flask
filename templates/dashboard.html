@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+    <h2>Dashboard</h2>
+    <p>Uma visão geral do seu caderninho.</p>
+</section>
+
+<hr>
+
+<section>
+    <div style="text-align: center; background-color: var(--card-background); padding: 1.5rem; border-radius: 8px;">
+        <h3>Total Geral Devido</h3>
+        <p style="font-size: 2.5rem; font-weight: bold; color: var(--accent); margin: 0;">
+            R$ {{ "%.2f"|format(stats.total_debt) }}
+        </p>
+    </div>
+</section>
+
+<hr>
+
+<section>
+    <h3>Fiados Registrados na Última Semana</h3>
+    <canvas id="fiadosChart"></canvas>
+</section>
+
+<hr>
+
+<section>
+    <h3>Backup dos Dados</h3>
+    <p>Baixe uma cópia de segurança de todos os seus dados em formato JSON.</p>
+    <a href="{{ url_for('download_backup') }}" role="button" class="contrast">Baixar Backup</a>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('fiadosChart').getContext('2d');
+        const chartData = {{ stats.weekly_fiados|tojson|safe }};
+        const labels = chartData.map(item => item[0]);
+        const dataPoints = chartData.map(item => item[1]);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '# de Fiados Registrados',
+                    data: dataPoints,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    });
+</script>
+{% endblock %}

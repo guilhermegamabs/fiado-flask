@@ -1,0 +1,83 @@
+/* static/css/style.css (VERSÃO FINAL CORRIGIDA) */
+
+/* --- ESTILOS GERAIS E LAYOUT --- */
+
+/* Limita a largura do corpo da página e centraliza */
+body { 
+    max-width: 900px; 
+    margin: auto; 
+}
+
+/* Estiliza a navegação no cabeçalho */
+header nav {
+    display: flex;
+    gap: 1.5rem; 
+    margin-bottom: 1rem;
+}
+
+/* --- ESTILOS DOS COMPONENTES --- */
+
+/* Classes para as mensagens de alerta (flash messages) */
+.alert { 
+    padding: 1rem; 
+    margin-bottom: 1rem; 
+    border-radius: 8px;
+    color: white; 
+    border: none;
+}
+.alert-success { background-color: #28a745; }
+.alert-error { background-color: #dc3545; }
+.alert-warning { background-color: #ffc107; color: black; }
+
+/* Alinha o cabeçalho da página de detalhes do cliente */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap; 
+    gap: 1rem;
+}
+
+/* Agrupa os botões de ação no cabeçalho */
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Remove a margem inferior do formulário dentro dos botões de ação */
+.header-actions form {
+    margin-bottom: 0;
+}
+
+
+/* --- CORREÇÃO FINAL DO BOTÃO "EDITAR NOME" --- */
+
+/*
+  Esta é a regra mais específica. Ela diz: "Para qualquer link <a>
+  com a classe .secondary que também tenha o atributo role='button'
+  e esteja dentro de um elemento com a classe .header-actions..."
+*/
+.header-actions a.secondary[role="button"] {
+    /* Força o fundo a ser o mesmo do botão padrão escuro */
+    background-color: var(--button-base);
+
+    /* Força a cor do texto a ser a mesma do botão padrão */
+    color: var(--button-text);
+
+    /* Garante que não haja decorações de texto como sublinhado */
+    text-decoration: none;
+
+    /* Adiciona uma borda sutil para combinar com o tema */
+    border: 1px solid var(--button-hover);
+    
+    /* Garante as mesmas bordas arredondadas */
+    border-radius: 8px;
+}
+
+/* Efeito hover para consistência */
+.header-actions a.secondary[role="button"]:hover {
+    background-color: var(--button-hover);
+    color: var(--button-text-hover);
+}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section>
+        <h2>Editar Cliente</h2>
+        <form action="{{ url_for('editar_cliente', cliente_id=cliente[0]) }}" method="post">
+            <label for="nome">Novo nome para <strong>{{ cliente[1] }}</strong></label>
+            <input type="text" id="nome" name="nome" required value="{{ cliente[1] }}">
+            <button type="submit">Salvar Alterações</button>
+        </form>
+    </section>
+{% endblock %}

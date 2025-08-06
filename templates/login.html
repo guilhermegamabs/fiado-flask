@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 400px; margin: 4rem auto; padding: 2rem; border: 1px solid var(--border); border-radius: 8px;">
+    <h2 style="text-align: center;">Login</h2>
+    <form method="post" action="{{ url_for('login') }}">
+        <label for="username">Nome de Usuário</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Senha</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit" style="width: 100%; margin-top: 1rem;">Entrar</button>
+    </form>
+</div>
+{% endblock %}
