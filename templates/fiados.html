@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- CONTEXTO 1: Registrar um novo fiado -->
+    {% if context == 'registrar' %}
+    <section>
+        <h2>Registrar Novo Fiado</h2>
+        <form action="{{ url_for('registrar_fiado_action') }}" method="post">
+            <label for="cliente_id">Selecione o Cliente</label>
+            <select name="cliente_id" id="cliente_id" required>
+                <option value="" disabled selected>-- Escolha um cliente --</option>
+                {% for id, nome in clientes %}
+                <option value="{{ id }}">{{ nome }}</option>
+                {% endfor %}
+            </select>
+            
+            <label for="descricao">Descrição do Produto/Serviço</label>
+            <input type="text" id="descricao" name="descricao" required placeholder="Ex: 2kg de Arroz">
+
+            <label for="valor">Valor (R$)</label>
+            <input type="text" inputmode="decimal" id="valor" name="valor" required placeholder="Ex: 15.50">
+
+            <button type="submit">Registrar Fiado</button>
+        </form>
+    </section>
+
+    <!-- CONTEXTO 2: Visualizar fiados de um cliente existente -->
+    {% elif context == 'visualizar' %}
+    <section>
+        <h2>Fiados de: <u>{{ nome_cliente }}</u></h2>
+        <h3>Total Devido: R$ {{ "%.2f"|format(total_devido) }}</h3>
+        
+        {% if ultimo_pagamento %}
+            <p>Último pagamento: <strong>R$ {{ "%.2f"|format(valor_ultimo_pagamento) }}</strong> em {{ ultimo_pagamento }}</p>
+        {% endif %}
+    </section>
+
+    <hr>
+
+    <section>
+        <h4>Registrar Pagamento</h4>
+        <form action="{{ url_for('realizar_pagamento', nome_cliente=nome_cliente) }}" method="post">
+            <label for="valor_pago">Valor a Pagar (R$)</label>
+            <input type="text" inputmode="decimal" name="valor_pago" id="valor_pago" required placeholder="Ex: 50.00">
+            <button type="submit">Pagar</button>
+        </form>
+    </section>
+
+    <hr>
+    
+    <section>
+        <h4>Itens Pendentes</h4>
+        {% if fiados %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for fiado in fiados %}
+                    <tr>
+                        <td>{{ fiado[4] }}</td>
+                        <td>{{ fiado[2] }}</td>
+                        <td>R$ {{ "%.2f"|format(fiado[3]) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>🎉 Cliente sem pendências!</p>
+        {% endif %}
+    </section>
+    
+    {% endif %}
+
+{% endblock %}

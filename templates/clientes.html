@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <section>
+        <h2>Cadastrar Novo Cliente</h2>
+        <form action="{{ url_for('cadastrar_cliente') }}" method="post">
+            <label for="nome">Nome do cliente</label>
+            <input type="text" id="nome" name="nome" required placeholder="Ex: João da Silva">
+            <button type="submit">Cadastrar Cliente</button>
+        </form>
+    </section>
+
+    <hr>
+
+    <section>
+        <h2>Clientes Cadastrados</h2>
+        {% if clientes %}
+            <ul>
+            {% for id, nome in clientes %}
+                <li>
+                    <a href="{{ url_for('listar_fiados', nome_cliente=nome) }}">{{ nome }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Ainda não há clientes cadastrados.</p>
+        {% endif %}
+    </section>
+{% endblock %}

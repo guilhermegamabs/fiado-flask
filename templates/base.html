@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Fiados</title>
+    <!-- Um CSS simples para deixar a página mais agradável sem esforço -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+    <style>
+        /* Pequenos ajustes */
+        body { max-width: 900px; margin: auto; }
+        nav { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 5px; }
+        .alert-success { background-color: #28a745; color: white; }
+        .alert-error { background-color: #dc3545; color: white; }
+        .alert-warning { background-color: #ffc107; color: black; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="{{ url_for('listar_clientes') }}" style="text-decoration:none; color: inherit;">Meu Caderninho</a></h1>
+        <nav>
+            <a href="{{ url_for('listar_clientes') }}" role="button">Clientes</a>
+            <a href="{{ url_for('registrar_fiado_form') }}" role="button">Registrar Fiado</a>
+        </nav>
+    </header>
+    <main>
+        <!-- Bloco para exibir mensagens de status (flash messages) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- O conteúdo específico de cada página será inserido aqui -->
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <hr>
+        <p>Aplicação Web de Controle de Fiados</p>
+    </footer>
+</body>
+</html>
