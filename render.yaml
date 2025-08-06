@@ -1,19 +1,14 @@
-# render.yaml (Versão Corrigida e Limpa)
-
 services:
-  # Define o serviço do banco de dados PostgreSQL
   - type: psql
-    name: estacaodolanche-db # Você pode mudar este nome se quiser
+    name: estacaodolanche-db
     plan: free
     region: frankfurt
-    # A versão 15 é estável e recomendada, sem aspas
     psqlVersion: 15
 
-  # Define o serviço da sua aplicação web
   - type: web
-    name: estacaodolanche-app # Você pode mudar este nome se quiser
+    name: estacaodolanche-app
     plan: free
-    region: frankfurt # IMPORTANTE: use a mesma região do banco
+    region: frankfurt
     runtime: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
@@ -21,7 +16,7 @@ services:
       - key: DB_HOST
         fromService:
           type: psql
-          name: estacaodolanche-db # DEVE ser igual ao nome do serviço de banco acima
+          name: estacaodolanche-db
           property: host
       - key: DB_NAME
         fromService:
@@ -41,4 +36,4 @@ services:
       - key: DB_PORT
         value: 5432
       - key: PYTHON_VERSION
-        value: 3.10.12 # Use a versão do Python mais próxima da sua
+        value: 3.10.12
