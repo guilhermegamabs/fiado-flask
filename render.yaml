@@ -1,10 +1,9 @@
 services:
-  - type: psql
+  - type: postgresql
     name: estacaodolanche-db
     plan: free
     region: frankfurt
-    psqlVersion: 15
-
+    version: 15
   - type: web
     name: estacaodolanche-app
     plan: free
@@ -15,22 +14,22 @@ services:
     envVars:
       - key: DB_HOST
         fromService:
-          type: psql
+          type: postgresql
           name: estacaodolanche-db
           property: host
       - key: DB_NAME
         fromService:
-          type: psql
+          type: postgresql
           name: estacaodolanche-db
           property: database
       - key: DB_USER
         fromService:
-          type: psql
+          type: postgresql
           name: estacaodolanche-db
           property: user
       - key: DB_PASSWORD
         fromService:
-          type: psql
+          type: postgresql
           name: estacaodolanche-db
           property: password
       - key: DB_PORT
