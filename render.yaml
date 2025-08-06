@@ -1,0 +1,39 @@
+services:
+  - type: psql
+    name: estacaodolanche-db
+    plan: free
+    region: frankfurt
+    psqlVersion: 15
+
+  - type: web
+    name: estacaodolanche-app
+    plan: free
+    region: frankfurt
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: DB_HOST
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: host
+      - key: DB_NAME
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: database
+      - key: DB_USER
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: user
+      - key: DB_PASSWORD
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: password
+      - key: DB_PORT
+        value: 5432
+      - key: PYTHON_VERSION
+        value: 3.10.12
