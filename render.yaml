@@ -1,0 +1,48 @@
+# render.yaml
+
+services:
+  # Serviço 1: O Banco de Dados PostgreSQL
+  - type: psql
+    name: estacaodolanche-db
+    plan: free
+    # A versão 15 é estável e recomendada
+    psqlVersion: "15"
+    region: frankfurt
+
+  # Serviço 2: A Aplicação Web Flask
+  - type: web
+    name: estacaodolanche-app
+    plan: free
+    runtime: python
+    region: frankfurt
+    # Comando para instalar as dependências
+    buildCommand: "pip install -r requirements.txt"
+    # Comando para iniciar o servidor de produção
+    startCommand: "gunicorn app:app"
+    envVars:
+      # Conecta a aplicação ao banco de dados criado acima
+      - key: DB_HOST
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: host
+      - key: DB_NAME
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: database
+      - key: DB_USER
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: user
+      - key: DB_PASSWORD
+        fromService:
+          type: psql
+          name: estacaodolanche-db
+          property: password
+      - key: DB_PORT
+        value: 5432
+      # Define a versão do Python para evitar problemas de compatibilidade
+      - key: PYTHON_VERSION
+        value: 3.10.12
