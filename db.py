@@ -1,5 +1,4 @@
-
-import psycopg2
+mport psycopg2
 import os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,16 +14,22 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     conn_params_raw = dj_database_url.parse(DATABASE_URL)
     
-    # Converte TODAS as chaves para minúsculas.
-    conn_params = {key.lower(): value for key, value in conn_params_raw.items()}
+    # --- A CORREÇÃO MAIS ROBUSTA ---
+    # Criamos um novo dicionário contendo APENAS as chaves que psycopg2 entende.
+    # Isso ignora automaticamente qualquer chave extra como 'conn_max_age', 'conn_health_checks', etc.
     
-    # Renomeia 'name' para 'dbname' para compatibilidade.
-    if 'name' in conn_params:
-        conn_params['dbname'] = conn_params.pop('name')
+    # Lista de chaves válidas para psycopg2.connect()
+    VALID_PG_KEYS = ['dbname', 'user', 'password', 'host', 'port']
+    
+    # Converte as chaves recebidas para minúsculas
+    conn_params_lower = {key.lower(): value for key, value in conn_params_raw.items()}
+    
+    # Renomeia 'name' para 'dbname' se necessário
+    if 'name' in conn_params_lower:
+        conn_params_lower['dbname'] = conn_params_lower.pop('name')
         
-    # --- A CORREÇÃO FINAL ESTÁ AQUI ---
-    # Remove chaves específicas que o psycopg2 não reconhece.
-    conn_params.pop('conn_max_age', None) # Remove 'conn_max_age' se existir.
+    # Filtra o dicionário, mantendo apenas as chaves válidas
+    conn_params = {key: value for key, value in conn_params_lower.items() if key in VALID_PG_KEYS}
 
 else:
     print("DATABASE_URL não encontrada, usando variáveis do .env para conexão local.")
@@ -53,6 +58,7 @@ def conectar():
     except psycopg2.OperationalError as e:
         print(f"Erro ao conectar ao PostgreSQL: {e}")
         raise e
+    
 def criar_tabelas():
     conn = conectar()
     cursor = conn.cursor()
