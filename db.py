@@ -1,4 +1,3 @@
-# No topo do seu db.py
 
 import psycopg2
 import os
@@ -9,18 +8,23 @@ import dj_database_url
 
 load_dotenv()
 
-# --- LÓGICA DE CONFIGURAÇÃO DE CONEXÃO FINAL ---
+# --- LÓGICA DE CONFIGURAÇÃO DE CONEXÃO FINAL E ROBUSTA ---
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
     conn_params_raw = dj_database_url.parse(DATABASE_URL)
     
-    # Converte TODAS as chaves do dicionário para minúsculas.
-    # E renomeia 'name' para 'dbname' para garantir a compatibilidade.
+    # Converte TODAS as chaves para minúsculas.
     conn_params = {key.lower(): value for key, value in conn_params_raw.items()}
+    
+    # Renomeia 'name' para 'dbname' para compatibilidade.
     if 'name' in conn_params:
         conn_params['dbname'] = conn_params.pop('name')
+        
+    # --- A CORREÇÃO FINAL ESTÁ AQUI ---
+    # Remove chaves específicas que o psycopg2 não reconhece.
+    conn_params.pop('conn_max_age', None) # Remove 'conn_max_age' se existir.
 
 else:
     print("DATABASE_URL não encontrada, usando variáveis do .env para conexão local.")
@@ -49,7 +53,6 @@ def conectar():
     except psycopg2.OperationalError as e:
         print(f"Erro ao conectar ao PostgreSQL: {e}")
         raise e
-
 def criar_tabelas():
     conn = conectar()
     cursor = conn.cursor()
