@@ -3,20 +3,24 @@ import os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
-import dj_database_url # <--- NOVA IMPORTAÇÃO
+import dj_database_url
 
 load_dotenv()
 
-# --- NOVA LÓGICA DE CONFIGURAÇÃO DE CONEXÃO ---
+# --- LÓGICA DE CONFIGURAÇÃO DE CONEXÃO CORRIGIDA ---
 
-# Tenta carregar a DATABASE_URL para ambientes de produção (Render, Fly.io, Heroku)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    # Se estiver em produção, usa a URL completa fornecida pela plataforma
     conn_params = dj_database_url.parse(DATABASE_URL)
+    
+    # --- A CORREÇÃO ESTÁ AQUI ---
+    # O dj_database_url usa a chave 'NAME', mas o psycopg2 espera 'dbname'.
+    # Verificamos se 'NAME' existe e a renomeamos para 'dbname'.
+    if 'NAME' in conn_params:
+        conn_params['dbname'] = conn_params.pop('NAME')
+
 else:
-    # Se estiver rodando localmente (sem DATABASE_URL), usa as variáveis do arquivo .env
     print("DATABASE_URL não encontrada, usando variáveis do .env para conexão local.")
     DB_NAME = os.getenv("DB_NAME")
     DB_USER = os.getenv("DB_USER")
@@ -38,7 +42,6 @@ else:
 def conectar():
     """Conecta ao banco de dados PostgreSQL usando os parâmetros definidos."""
     try:
-        # Usa os parâmetros definidos acima, seja de produção (DATABASE_URL) ou local (.env)
         conn = psycopg2.connect(**conn_params)
         return conn
     except psycopg2.OperationalError as e:
