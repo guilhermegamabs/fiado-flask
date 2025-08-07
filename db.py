@@ -7,16 +7,10 @@ import dj_database_url
 
 load_dotenv()
 
-# --- LÓGICA DE CONFIGURAÇÃO DE CONEXÃO FINAL E ROBUSTA ---
-
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
     conn_params_raw = dj_database_url.parse(DATABASE_URL)
-    
-    # --- A CORREÇÃO MAIS ROBUSTA ---
-    # Criamos um novo dicionário contendo APENAS as chaves que psycopg2 entende.
-    # Isso ignora automaticamente qualquer chave extra como 'conn_max_age', 'conn_health_checks', etc.
     
     # Lista de chaves válidas para psycopg2.connect()
     VALID_PG_KEYS = ['dbname', 'user', 'password', 'host', 'port']
@@ -24,7 +18,6 @@ if DATABASE_URL:
     # Converte as chaves recebidas para minúsculas
     conn_params_lower = {key.lower(): value for key, value in conn_params_raw.items()}
     
-    # Renomeia 'name' para 'dbname' se necessário
     if 'name' in conn_params_lower:
         conn_params_lower['dbname'] = conn_params_lower.pop('name')
         
@@ -51,7 +44,6 @@ else:
     }
 
 def conectar():
-    """Conecta ao banco de dados PostgreSQL usando os parâmetros definidos."""
     try:
         conn = psycopg2.connect(**conn_params)
         return conn

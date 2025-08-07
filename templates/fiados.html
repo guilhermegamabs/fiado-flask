@@ -2,127 +2,125 @@
 
 {% block content %}
 
-    {# CONTEXTO 1: Exibe o formulário de registro de um novo fiado #}
-    {% if context == 'registrar' %}
-    <section>
-        <h2>Registrar Novo Fiado</h2>
-        <form action="{{ url_for('registrar_fiado_action') }}" method="post">
-            <label for="cliente_id">Selecione o Cliente</label>
-            <select name="cliente_id" id="cliente_id" required>
-                <option value="" disabled selected>-- Escolha um cliente --</option>
-                {% for id, nome in clientes %}
-                <option value="{{ id }}">{{ nome }}</option>
-                {% endfor %}
-            </select>
-            <label for="descricao">Descrição do Produto/Serviço</label>
-            <input type="text" id="descricao" name="descricao" required placeholder="Ex: 2kg de Arroz">
-            <label for="valor">Valor (R$)</label>
-            <input type="text" inputmode="decimal" id="valor" name="valor" required placeholder="Ex: 15.50">
-            <button type="submit">Registrar Fiado</button>
-        </form>
-    </section>
+{% if context == 'registrar' %}
+<section>
+    <h2>Registrar Novo Fiado</h2>
+    <form action="{{ url_for('registrar_fiado_action') }}" method="post">
+        <label for="cliente_id">Selecione o Cliente</label>
+        <select name="cliente_id" id="cliente_id" required>
+            <option value="" disabled selected>-- Escolha um cliente --</option>
+            {% for id, nome in clientes %}
+            <option value="{{ id }}">{{ nome }}</option>
+            {% endfor %}
+        </select>
+        <label for="descricao">Descrição do Produto/Serviço</label>
+        <input type="text" id="descricao" name="descricao" required placeholder="Ex: 2kg de Arroz">
+        <label for="valor">Valor (R$)</label>
+        <input type="text" inputmode="decimal" id="valor" name="valor" required placeholder="Ex: 15.50">
+        <button type="submit">Registrar Fiado</button>
+    </form>
+</section>
 
-    {# CONTEXTO 2: Exibe os detalhes, pagamentos e históricos de um cliente #}
-    {% elif context == 'visualizar' %}
-    <section>
-        <div class="page-header">
-            <div>
-                <h2>Fiados de: <u>{{ nome_cliente }}</u></h2>
-                <h3>Total Devido: R$ {{ "%.2f"|format(total_devido) }}</h3>
-            </div>
-            <div class="header-actions">
-                <a href="{{ url_for('editar_cliente', cliente_id=cliente_id) }}" role="button" class="secondary action-button">Editar Nome</a>
-                <form action="{{ url_for('excluir_cliente', cliente_id=cliente_id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.');">
-                    <button type="submit" class="contrast action-button">Excluir Cliente</button>
-                </form>
-            </div>
+{% elif context == 'visualizar' %}
+<section>
+    <div class="page-header">
+        <div>
+            <h2>Fiados de: <u>{{ nome_cliente }}</u></h2>
+            <h3>Total Devido: R$ {{ "%.2f"|format(total_devido) }}</h3>
         </div>
-        {% if ultimo_pagamento %}
-            <p>Último pagamento: <strong>R$ {{ "%.2f"|format(valor_ultimo_pagamento) }}</strong> em {{ ultimo_pagamento }}</p>
-        {% endif %}
-    </section>
-    <hr>
-    <section>
-        <h4>Registrar Pagamento</h4>
-        <form action="{{ url_for('realizar_pagamento', nome_cliente=nome_cliente) }}" method="post">
-            <label for="valor_pago">Valor a Pagar (R$)</label>
-            <input type="text" inputmode="decimal" name="valor_pago" id="valor_pago" required placeholder="Ex: 50.00">
-            <button type="submit">Pagar</button>
-        </form>
-    </section>
-    <hr>
-    <section>
-        <h4>Itens Pendentes</h4>
-        {% if fiados %}
-            <table>
-                <thead>
-                    <tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Ação</th></tr>
-                </thead>
-                <tbody>
-                {% for fiado in fiados %}
-                    <tr>
-                        <td>{{ fiado[4] }}</td>
-                        <td>{{ fiado[2] }}</td>
-                        <td>R$ {{ "%.2f"|format(fiado[3]) }}</td>
-                        <td>
-                             <form action="{{ url_for('excluir_fiado', fiado_id=fiado[0]) }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este item?');">
-                                <button type="submit" class="contrast" style="margin: 0; padding: 0.2rem 0.5rem;">Excluir</button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p style="text-align: center; font-size: 1.1rem;">🎉 Cliente sem pendências!</p>
-        {% endif %}
-    </section>
-    <hr>
-    <section>
-        <h4>Histórico de Pagamentos</h4>
-        {% if historico_pagamentos %}
-            <table>
-                <thead>
-                    <tr><th>Data</th><th>Valor Pago</th></tr>
-                </thead>
-                <tbody>
-                {% for pagamento in historico_pagamentos %}
-                    <tr><td>{{ pagamento[1] }}</td><td>R$ {{ "%.2f"|format(pagamento[0]) }}</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>Ainda não há pagamentos registrados para este cliente.</p>
-        {% endif %}
-    </section>
+        <div class="header-actions">
+            <a href="{{ url_for('editar_cliente', cliente_id=cliente_id) }}" role="button" class="secondary action-button">Editar Nome</a>
+            <form action="{{ url_for('excluir_cliente', cliente_id=cliente_id) }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.');">
+                <button type="submit" class="contrast action-button">Excluir Cliente</button>
+            </form>
+        </div>
+    </div>
+    {% if ultimo_pagamento %}
+        <p>Último pagamento: <strong>R$ {{ "%.2f"|format(valor_ultimo_pagamento) }}</strong> em {{ ultimo_pagamento }}</p>
+    {% endif %}
+</section>
+<hr>
+<section>
+    <h4>Registrar Pagamento</h4>
+    <form action="{{ url_for('realizar_pagamento', nome_cliente=nome_cliente) }}" method="post">
+        <label for="valor_pago">Valor a Pagar (R$)</label>
+        <input type="text" inputmode="decimal" name="valor_pago" id="valor_pago" required placeholder="Ex: 50.00">
+        <button type="submit">Pagar</button>
+    </form>
+</section>
+<hr>
+<section>
+    <h4>Itens Pendentes</h4>
+    {% if fiados %}
+        <table>
+            <thead>
+                <tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Ação</th></tr>
+            </thead>
+            <tbody>
+            {% for fiado in fiados %}
+                <tr>
+                    <td>{{ fiado[4] }}</td>
+                    <td>{{ fiado[2] }}</td>
+                    <td>R$ {{ "%.2f"|format(fiado[3]) }}</td>
+                    <td>
+                         <form action="{{ url_for('excluir_fiado', fiado_id=fiado[0]) }}" method="post" onsubmit="return confirm('Tem certeza que deseja excluir este item?');">
+                            <button type="submit" class="contrast" style="margin: 0; padding: 0.2rem 0.5rem;">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="text-align: center; font-size: 1.1rem;">🎉 Cliente sem pendências!</p>
+    {% endif %}
+</section>
+<hr>
+<section>
+    <h4>Histórico de Pagamentos</h4>
+    {% if historico_pagamentos %}
+        <table>
+            <thead>
+                <tr><th>Data</th><th>Valor Pago</th></tr>
+            </thead>
+            <tbody>
+            {% for pagamento in historico_pagamentos %}
+                <tr><td>{{ pagamento[1] }}</td><td>R$ {{ "%.2f"|format(pagamento[0]) }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Ainda não há pagamentos registrados para este cliente.</p>
+    {% endif %}
+</section>
 
-    <hr>
-    <section>
-        <h4>Itens Pagos</h4>
-        {% if itens_pagos %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Descrição</th>
-                        <th>Valor</th>
-                        <th>Data do Pagamento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for item in itens_pagos %}
-                    <tr>
-                        <td>{{ item[0] }}</td>
-                        <td>R$ {{ "%.2f"|format(item[1]) }}</td>
-                        <td>{{ item[2] }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>Nenhum item foi completamente pago ainda.</p>
-        {% endif %}
-    </section>
-    
-    {% endif %} {# <-- ESTE É O ENDIF QUE PROVAVELMENTE ESTAVA FALTANDO #}
+<hr>
+<section>
+    <h4>Itens Pagos</h4>
+    {% if itens_pagos %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Data do Pagamento</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in itens_pagos %}
+                <tr>
+                    <td>{{ item[0] }}</td>
+                    <td>R$ {{ "%.2f"|format(item[1]) }}</td>
+                    <td>{{ item[2] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhum item foi completamente pago ainda.</p>
+    {% endif %}
+</section>
+
+{% endif %}
 
 {% endblock %}
