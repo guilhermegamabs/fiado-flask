@@ -33,8 +33,6 @@ def load_user(user_id):
 
 with app.app_context():
     database.criar_tabelas()
-    if not database.buscar_usuario_por_nome('admin'):
-        database.inserir_usuario('admin', 'admin123')
 
 # --- Rotas de Autenticação ---
 @app.route('/login', methods=['GET', 'POST'])
