@@ -3,25 +3,49 @@ import os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+import dj_database_url # <--- NOVA IMPORTAÇÃO
 
 load_dotenv()
 
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+# --- NOVA LÓGICA DE CONFIGURAÇÃO DE CONEXÃO ---
 
-if not all([DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT]):
-    raise KeyError("Uma ou mais variáveis de ambiente do banco de dados não foram definidas. Verifique seu arquivo .env")
+# Tenta carregar a DATABASE_URL para ambientes de produção (Render, Fly.io, Heroku)
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Se estiver em produção, usa a URL completa fornecida pela plataforma
+    conn_params = dj_database_url.parse(DATABASE_URL)
+else:
+    # Se estiver rodando localmente (sem DATABASE_URL), usa as variáveis do arquivo .env
+    print("DATABASE_URL não encontrada, usando variáveis do .env para conexão local.")
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT")
+
+    if not all([DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT]):
+        raise KeyError("Para desenvolvimento local, defina DB_NAME, DB_USER, etc. no seu arquivo .env")
+    
+    conn_params = {
+        "dbname": DB_NAME,
+        "user": DB_USER,
+        "password": DB_PASSWORD,
+        "host": DB_HOST,
+        "port": DB_PORT,
+    }
 
 def conectar():
+    """Conecta ao banco de dados PostgreSQL usando os parâmetros definidos."""
     try:
-        conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
+        # Usa os parâmetros definidos acima, seja de produção (DATABASE_URL) ou local (.env)
+        conn = psycopg2.connect(**conn_params)
         return conn
     except psycopg2.OperationalError as e:
         print(f"Erro ao conectar ao PostgreSQL: {e}")
         raise e
+
+# --- O RESTANTE DO ARQUIVO CONTINUA EXATAMENTE O MESMO ---
 
 def criar_tabelas():
     conn = conectar()
@@ -221,7 +245,6 @@ def excluir_cliente(cliente_id):
         conn.close()
         return "Não é possível excluir clientes com dívidas pendentes."
     
-    # Ao excluir um cliente, também excluímos todos os seus registros associados
     cursor.execute("DELETE FROM fiados WHERE cliente_id = %s", (cliente_id,))
     cursor.execute("DELETE FROM pagamentos WHERE cliente_id = %s", (cliente_id,))
     cursor.execute("DELETE FROM clientes WHERE id = %s", (cliente_id,))
