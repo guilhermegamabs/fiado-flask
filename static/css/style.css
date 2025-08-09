@@ -78,3 +78,40 @@ header nav {
 .header-actions form {
     margin-bottom: 0;
 }
+
+.client-list {
+    list-style: none; 
+    padding: 0;
+    
+    display: grid;
+    
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem; 
+}
+
+.client-card {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem; 
+    
+    background-color: var(--card-background); 
+    padding: 1.5rem 1rem; 
+    border-radius: 8px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+    text-decoration: none;
+    color: var(--text-main); 
+    font-size: 1.1rem;
+    font-weight: bold;
+
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.client-card:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); 
+    color: var(--accent); 
+}
+
+.client-card .fa-user {
+    color: var(--text-muted);
+}
