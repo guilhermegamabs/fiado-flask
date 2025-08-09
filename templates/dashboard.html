@@ -8,6 +8,36 @@
 
 <hr>
 
+<!-- NOVOS CARDS DE STATS DIÁRIAS -->
+<section>
+    <h3>Resumo do Dia</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        
+        <!-- Card de Novos Fiados (Entradas) -->
+        <div style="background-color: var(--card-background); padding: 1rem; border-radius: 8px; border-left: 5px solid #dc3545;">
+            <p style="margin: 0; font-size: 0.9rem; color: var(--muted-color);">NOVOS FIADOS (HOJE)</p>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 0;">R$ {{ "%.2f"|format(stats.daily_stats.novos_fiados_valor) }}</p>
+            <p style="margin: 0; font-size: 0.9rem; color: var(--muted-color);">{{ stats.daily_stats.novos_fiados_count }} item(ns)</p>
+        </div>
+
+        <!-- Card de Pagamentos (Saídas) -->
+        <div style="background-color: var(--card-background); padding: 1rem; border-radius: 8px; border-left: 5px solid #28a745;">
+            <p style="margin: 0; font-size: 0.9rem; color: var(--muted-color);">PAGAMENTOS RECEBIDOS (HOJE)</p>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 0;">R$ {{ "%.2f"|format(stats.daily_stats.pagamentos_valor) }}</p>
+        </div>
+
+        <!-- Card de Balanço do Dia -->
+        <div style="background-color: var(--card-background); padding: 1rem; border-radius: 8px; border-left: 5px solid #007bff;">
+            <p style="margin: 0; font-size: 0.9rem; color: var(--muted-color);">BALANÇO DO DIA</p>
+            <p style="font-size: 1.8rem; font-weight: bold; margin: 0;">R$ {{ "%.2f"|format(stats.daily_stats.balanco_dia) }}</p>
+        </div>
+        
+    </div>
+</section>
+
+<hr>
+
+<!-- SEÇÃO DE DÍVIDA TOTAL (JÁ EXISTENTE) -->
 <section>
     <div style="text-align: center; background-color: var(--card-background); padding: 1.5rem; border-radius: 8px;">
         <h3>Total Geral Devido</h3>
@@ -19,6 +49,7 @@
 
 <hr>
 
+<!-- SEÇÃO DO GRÁFICO (JÁ EXISTENTE) -->
 <section>
     <h3>Fiados Registrados na Última Semana</h3>
     <canvas id="fiadosChart"></canvas>
@@ -26,6 +57,7 @@
 
 <hr>
 
+<!-- SEÇÃO DE BACKUP (JÁ EXISTENTE) -->
 <section>
     <h3>Backup dos Dados</h3>
     <p>Baixe uma cópia de segurança de todos os seus dados em formato JSON.</p>
@@ -33,30 +65,50 @@
 </section>
 {% endblock %}
 
+
 {% block scripts %}
+<!-- Importa a biblioteca Chart.js para desenhar o gráfico -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Garante que o script rode apenas depois que a página carregar
     document.addEventListener('DOMContentLoaded', function () {
+        // Pega o elemento <canvas> do HTML
         const ctx = document.getElementById('fiadosChart').getContext('2d');
+        
+        // Pega os dados do gráfico que o Flask enviou e os converte de JSON para um objeto JavaScript
         const chartData = {{ stats.weekly_fiados|tojson|safe }};
+        
+        // Extrai os rótulos (datas) e os pontos de dados (quantidades)
         const labels = chartData.map(item => item[0]);
         const dataPoints = chartData.map(item => item[1]);
 
+        // Cria uma nova instância do gráfico
         new Chart(ctx, {
-            type: 'bar',
+            type: 'bar', // Tipo do gráfico: barras
             data: {
-                labels: labels,
+                labels: labels, // Rótulos do eixo X
                 datasets: [{
                     label: '# de Fiados Registrados',
-                    data: dataPoints,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    data: dataPoints, // Dados do eixo Y
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)', // Cor das barras
+                    borderColor: 'rgba(54, 162, 235, 1)', // Cor da borda das barras
                     borderWidth: 1
                 }]
             },
             options: {
-                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-                plugins: { legend: { display: false } }
+                scales: {
+                    y: {
+                        beginAtZero: true, // Começa o eixo Y no zero
+                        ticks: {
+                            stepSize: 1 // Garante que o eixo Y mostre números inteiros (1, 2, 3...)
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Esconde a legenda no topo do gráfico
+                    }
+                }
             }
         });
     });

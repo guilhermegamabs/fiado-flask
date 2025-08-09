@@ -276,10 +276,12 @@ def buscar_cliente_id_por_fiado(fiado_id):
 def get_dashboard_stats():
     conn = conectar()
     cursor = conn.cursor()
-    cursor.execute("SELECT SUM(valor) FROM fiados WHERE pagamento_id IS NULL")
-    total_debt_raw = cursor.fetchone()[0]
-    total_debt = total_debt_raw if total_debt_raw is not None else 0
     
+    # 1. Dívida total geral (sem alterações)
+    cursor.execute("SELECT SUM(valor) FROM fiados WHERE pagamento_id IS NULL")
+    total_debt = cursor.fetchone()[0] or 0.0
+    
+    # 2. Gráfico semanal (sem alterações)
     query_chart = """
         SELECT TO_CHAR(data::date, 'YYYY-MM-DD') as dia, COUNT(id) as quantidade
         FROM fiados WHERE data::date >= current_date - interval '7 days'
@@ -287,9 +289,35 @@ def get_dashboard_stats():
     """
     cursor.execute(query_chart)
     weekly_fiados = cursor.fetchall()
+    
+    # --- NOVOS STATS DO DIA ---
+    
+    # 3. Total em R$ de novos fiados criados hoje
+    cursor.execute("SELECT COALESCE(SUM(valor), 0.0) FROM fiados WHERE data::date = CURRENT_DATE")
+    valor_novos_fiados_hoje = cursor.fetchone()[0]
+    
+    # 4. Total em R$ de pagamentos recebidos hoje
+    cursor.execute("SELECT COALESCE(SUM(valor), 0.0) FROM pagamentos WHERE data::date = CURRENT_DATE")
+    valor_pago_hoje = cursor.fetchone()[0]
+
+    # 5. Contagem (quantidade) de fiados criados hoje
+    cursor.execute("SELECT COUNT(id) FROM fiados WHERE data::date = CURRENT_DATE")
+    count_fiados_hoje = cursor.fetchone()[0]
+    
     cursor.close()
     conn.close()
-    return {"total_debt": total_debt, "weekly_fiados": weekly_fiados}
+    
+    # Retorna um único dicionário com tudo organizado
+    return {
+        "total_debt": total_debt, 
+        "weekly_fiados": weekly_fiados,
+        "daily_stats": {
+            "novos_fiados_valor": valor_novos_fiados_hoje,
+            "pagamentos_valor": valor_pago_hoje,
+            "novos_fiados_count": count_fiados_hoje,
+            "balanco_dia": valor_pago_hoje - valor_novos_fiados_hoje
+        }
+    }
 
 def get_all_data_for_backup():
     from psycopg2.extras import RealDictCursor
