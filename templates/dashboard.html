@@ -37,7 +37,6 @@
 
 <hr>
 
-<!-- SEÇÃO DE DÍVIDA TOTAL (JÁ EXISTENTE) -->
 <section>
     <div style="text-align: center; background-color: var(--card-background); padding: 1.5rem; border-radius: 8px;">
         <h3>Total Geral Devido</h3>
@@ -49,7 +48,6 @@
 
 <hr>
 
-<!-- SEÇÃO DO GRÁFICO (JÁ EXISTENTE) -->
 <section>
     <h3>Fiados Registrados na Última Semana</h3>
     <canvas id="fiadosChart"></canvas>
@@ -57,7 +55,6 @@
 
 <hr>
 
-<!-- SEÇÃO DE BACKUP (JÁ EXISTENTE) -->
 <section>
     <h3>Backup dos Dados</h3>
     <p>Baixe uma cópia de segurança de todos os seus dados em formato JSON.</p>
@@ -67,46 +64,40 @@
 
 
 {% block scripts %}
-<!-- Importa a biblioteca Chart.js para desenhar o gráfico -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Garante que o script rode apenas depois que a página carregar
     document.addEventListener('DOMContentLoaded', function () {
-        // Pega o elemento <canvas> do HTML
         const ctx = document.getElementById('fiadosChart').getContext('2d');
         
-        // Pega os dados do gráfico que o Flask enviou e os converte de JSON para um objeto JavaScript
         const chartData = {{ stats.weekly_fiados|tojson|safe }};
         
-        // Extrai os rótulos (datas) e os pontos de dados (quantidades)
         const labels = chartData.map(item => item[0]);
         const dataPoints = chartData.map(item => item[1]);
 
-        // Cria uma nova instância do gráfico
         new Chart(ctx, {
-            type: 'bar', // Tipo do gráfico: barras
+            type: 'bar', 
             data: {
-                labels: labels, // Rótulos do eixo X
+                labels: labels, 
                 datasets: [{
                     label: '# de Fiados Registrados',
-                    data: dataPoints, // Dados do eixo Y
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)', // Cor das barras
-                    borderColor: 'rgba(54, 162, 235, 1)', // Cor da borda das barras
+                    data: dataPoints, 
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)', 
+                    borderColor: 'rgba(54, 162, 235, 1)', 
                     borderWidth: 1
                 }]
             },
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true, // Começa o eixo Y no zero
+                        beginAtZero: true, 
                         ticks: {
-                            stepSize: 1 // Garante que o eixo Y mostre números inteiros (1, 2, 3...)
+                            stepSize: 1 
                         }
                     }
                 },
                 plugins: {
                     legend: {
-                        display: false // Esconde a legenda no topo do gráfico
+                        display: false 
                     }
                 }
             }

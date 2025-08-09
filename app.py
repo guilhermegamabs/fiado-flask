@@ -139,10 +139,8 @@ def registrar_fiado_action():
 @app.route("/cliente/<nome_cliente>")
 @login_required
 def listar_fiados(nome_cliente):
-    # Busca os itens PENDENTES e o total devido
     cliente_id, fiados_pendentes, total_devido, ultima_data, valor_ultimo = database.buscar_fiados_por_cliente(nome_cliente)
     
-    # Busca os itens PAGOS e o histórico de pagamentos
     historico_pagamentos = database.buscar_pagamentos_por_cliente(cliente_id) if cliente_id else []
     itens_pagos = database.buscar_fiados_pagos_por_cliente(cliente_id) if cliente_id else []
 

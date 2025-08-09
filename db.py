@@ -12,16 +12,13 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     conn_params_raw = dj_database_url.parse(DATABASE_URL)
     
-    # Lista de chaves válidas para psycopg2.connect()
     VALID_PG_KEYS = ['dbname', 'user', 'password', 'host', 'port']
     
-    # Converte as chaves recebidas para minúsculas
     conn_params_lower = {key.lower(): value for key, value in conn_params_raw.items()}
     
     if 'name' in conn_params_lower:
         conn_params_lower['dbname'] = conn_params_lower.pop('name')
         
-    # Filtra o dicionário, mantendo apenas as chaves válidas
     conn_params = {key: value for key, value in conn_params_lower.items() if key in VALID_PG_KEYS}
 
 else:
@@ -277,11 +274,9 @@ def get_dashboard_stats():
     conn = conectar()
     cursor = conn.cursor()
     
-    # 1. Dívida total geral (sem alterações)
     cursor.execute("SELECT SUM(valor) FROM fiados WHERE pagamento_id IS NULL")
     total_debt = cursor.fetchone()[0] or 0.0
     
-    # 2. Gráfico semanal (sem alterações)
     query_chart = """
         SELECT TO_CHAR(data::date, 'YYYY-MM-DD') as dia, COUNT(id) as quantidade
         FROM fiados WHERE data::date >= current_date - interval '7 days'
@@ -290,24 +285,19 @@ def get_dashboard_stats():
     cursor.execute(query_chart)
     weekly_fiados = cursor.fetchall()
     
-    # --- NOVOS STATS DO DIA ---
     
-    # 3. Total em R$ de novos fiados criados hoje
     cursor.execute("SELECT COALESCE(SUM(valor), 0.0) FROM fiados WHERE data::date = CURRENT_DATE")
     valor_novos_fiados_hoje = cursor.fetchone()[0]
     
-    # 4. Total em R$ de pagamentos recebidos hoje
     cursor.execute("SELECT COALESCE(SUM(valor), 0.0) FROM pagamentos WHERE data::date = CURRENT_DATE")
     valor_pago_hoje = cursor.fetchone()[0]
 
-    # 5. Contagem (quantidade) de fiados criados hoje
     cursor.execute("SELECT COUNT(id) FROM fiados WHERE data::date = CURRENT_DATE")
     count_fiados_hoje = cursor.fetchone()[0]
     
     cursor.close()
     conn.close()
     
-    # Retorna um único dicionário com tudo organizado
     return {
         "total_debt": total_debt, 
         "weekly_fiados": weekly_fiados,
