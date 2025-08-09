@@ -1,35 +1,65 @@
-/* static/css/style.css (VERSÃO FINAL CORRIGIDA) */
-
-/* --- ESTILOS GERAIS E LAYOUT --- */
-
-/* Limita a largura do corpo da página e centraliza */
 body { 
-    max-width: 900px; 
+    max-width: 960px;
     margin: auto; 
 }
 
-/* Estiliza a navegação no cabeçalho */
 header nav {
-    display: flex;
-    gap: 1.5rem; 
-    margin-bottom: 1rem;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap; 
+    gap: 1rem; 
+    margin-bottom: 2rem; 
 }
 
-/* --- ESTILOS DOS COMPONENTES --- */
+.nav-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
 
-/* Classes para as mensagens de alerta (flash messages) */
+.nav-links a, .logout-button a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--button-hover);
+    border-radius: 8px;
+    background-color: transparent;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.nav-links a:hover {
+    background-color: var(--button-hover);
+    color: var(--button-text-hover);
+}
+
+.logout-button a.contrast {
+    background-color: var(--contrast);
+    color: var(--background);
+    border-color: var(--contrast);
+    font-weight: bold;
+}
+
+.logout-button a.contrast:hover {
+    background-color: var(--contrast-hover);
+    border-color: var(--contrast-hover);
+}
+
 .alert { 
     padding: 1rem; 
     margin-bottom: 1rem; 
     border-radius: 8px;
     color: white; 
     border: none;
+    text-align: center;
 }
+
 .alert-success { background-color: #28a745; }
 .alert-error { background-color: #dc3545; }
 .alert-warning { background-color: #ffc107; color: black; }
 
-/* Alinha o cabeçalho da página de detalhes do cliente */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -39,45 +69,12 @@ header nav {
     gap: 1rem;
 }
 
-/* Agrupa os botões de ação no cabeçalho */
 .header-actions {
     display: flex;
     gap: 0.75rem;
     align-items: center;
 }
 
-/* Remove a margem inferior do formulário dentro dos botões de ação */
 .header-actions form {
     margin-bottom: 0;
-}
-
-
-/* --- CORREÇÃO FINAL DO BOTÃO "EDITAR NOME" --- */
-
-/*
-  Esta é a regra mais específica. Ela diz: "Para qualquer link <a>
-  com a classe .secondary que também tenha o atributo role='button'
-  e esteja dentro de um elemento com a classe .header-actions..."
-*/
-.header-actions a.secondary[role="button"] {
-    /* Força o fundo a ser o mesmo do botão padrão escuro */
-    background-color: var(--button-base);
-
-    /* Força a cor do texto a ser a mesma do botão padrão */
-    color: var(--button-text);
-
-    /* Garante que não haja decorações de texto como sublinhado */
-    text-decoration: none;
-
-    /* Adiciona uma borda sutil para combinar com o tema */
-    border: 1px solid var(--button-hover);
-    
-    /* Garante as mesmas bordas arredondadas */
-    border-radius: 8px;
-}
-
-/* Efeito hover para consistência */
-.header-actions a.secondary[role="button"]:hover {
-    background-color: var(--button-hover);
-    color: var(--button-text-hover);
 }
