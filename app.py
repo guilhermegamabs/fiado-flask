@@ -4,9 +4,11 @@ import db as database
 import click
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
+import os
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-app.secret_key = 'uma-chave-secreta-bem-dificil-e-longa-para-seguranca'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # --- Configuração do Flask-Login ---
 login_manager = LoginManager()
