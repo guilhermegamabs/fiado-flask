@@ -8,13 +8,6 @@
 
 Sistema web completo para gerenciar "fiado" (dívidas) de clientes. Desenvolvido com Python e Flask, o projeto permite cadastrar clientes, registrar itens de dívida e pagamentos, com acesso administrativo protegido por login.
 
-## 🎨 Telas da Aplicação
-
-Abaixo estão as principais telas do sistema, demonstrando o fluxo de uso, desde a autenticação até o gerenciamento detalhado das dívidas de um cliente.
-
-| Tela de Login | Dashboard Principal | Detalhes do Cliente |
-| :---: | :---: | :---: |
-| ![Tela de Login](../images/login.PNG) | ![Dashboard Principal](../images/dash.PNG) | ![Detalhes do Cliente](../images/cliente.PNG) |
 
 ## 📋 Índice
 
