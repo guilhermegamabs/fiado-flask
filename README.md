@@ -15,8 +15,6 @@ Sistema web completo para gerenciar "fiado" (dívidas) de clientes. Desenvolvido
 -   [✨ Funcionalidades Principais](#-funcionalidades-principais)
 -   [🚀 Stack de Tecnologia](#-stack-de-tecnologia)
 -   [🛡️ Segurança](#️-segurança)
--   [⚙️ Configuração para Desenvolvimento Local](#️-configuração-para-desenvolvimento-local)
--   [☁️ Deployment](#️-deployment)
 -   [👨‍💻 Autor](#-autor)
 
 ## 📖 Sobre o Projeto
